@@ -1,9 +1,16 @@
 package com.cos.person.web;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.validation.Valid;
+
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +25,8 @@ import com.cos.person.domain.JoinReqDto;
 import com.cos.person.domain.UpdateReqDto;
 import com.cos.person.domain.User;
 import com.cos.person.domain.UserRepository;
+
+import lombok.val;
 
 @RestController
 public class UserController {
@@ -49,9 +58,11 @@ public class UserController {
 	// x-www-form-urlencoded => request.getParamter()
 	// text/plain => @RequestBody 어노테이션 String data
 	// application/json => @ResponseBody 어노테이션 + 오브젝트로 받기
-	public CommonDto<String> save(@RequestBody JoinReqDto dto) {
+	public CommonDto<?> save(@Valid @RequestBody JoinReqDto dto, BindingResult bindingResult) {
+		
+		
 		System.out.println("save()");
-		System.out.println("user : "+dto);
+		System.out.println("user : " + dto);
 		userRepository.save(dto);
 		
 //		System.out.println("data : "+data);
@@ -72,9 +83,9 @@ public class UserController {
 	
 	// http://localhost:8080/user/2
 	@PutMapping("/user/{id}")
-	public CommonDto update(@PathVariable int id , @RequestBody UpdateReqDto dto ) {
-		System.out.println("update() : " + id + dto);	
-//		userRepository.update(id ,dto);
+	public CommonDto update(@PathVariable int id , @Valid @RequestBody UpdateReqDto dto , BindingResult bindingResult) {
+		System.out.println("update()");	
+		userRepository.update(id, dto);
 		return new CommonDto<>(HttpStatus.OK.value()); 
 	}
 }
